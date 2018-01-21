@@ -1,2 +1,3 @@
-# multitech-dot-flash
-ARM Mbed Multitech xDot and mDot flash utility
+# xDot and mDot flash utility
+
+ARM Mbed Multitech xDot and mDot flash utility to be used within ARM Mbed projects.
