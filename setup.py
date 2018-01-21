@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='multitech_dot_flash',
-    version='0.3',
+    version='0.4',
     description='ARM Mbed Multitech xDot and mDot flash utility',
     long_description=open('README.rst').read(),
     url='https://github.com/sensidev/multitech-dot-flash',
