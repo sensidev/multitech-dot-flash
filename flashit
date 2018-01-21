@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+WORKSPACE_PATH=$(dirname $PWD)
 REPO_NAME=${PWD##*/}
 
 XDOT_NAME="XDOT"
@@ -15,9 +16,9 @@ COMPILE_ONLY=false
 
 function usage()
 {
-    echo "Flash the firmware of your xdot or mdot."
+    echo "Compile and flash the firmware for Multitech xdot or mdot."
     echo ""
-    echo "./flash.sh"
+    echo "flashit"
     echo "    -h --help"
     echo "    -t --target=[xdot|mdot]   Choose your target xdot or mdot."
     echo "    -p --previous             Use previous build for current target."
@@ -25,10 +26,10 @@ function usage()
     echo ""
     echo "Examples:"
     echo "Compile and flash an xdot"
-    echo "./flash.sh -t=xdot"
+    echo "flashit -t=xdot"
     echo ""
     echo "Flash previous build, already compiled for an mdot"
-    echo "./flash.sh -t=mdot -p"
+    echo "flashit -t=mdot -p"
 }
 
 while [ "$1" != "" ]; do
@@ -61,10 +62,10 @@ while [ "$1" != "" ]; do
 done
 
 # Create virtualenv with Mbed toolchain if it's not already created
-if [ ! -d "../virtualenv" ]; then
+if [ ! -d "${WORKSPACE_PATH}/virtualenv" ]; then
     echo "[INFO] Install Mbed toolchain"
-    virtualenv ../virtualenv
-    source ../virtualenv/bin/activate
+    virtualenv ${WORKSPACE_PATH}/virtualenv
+    source ${WORKSPACE_PATH}/virtualenv/bin/activate
 
     pip install mbed-cli
 
@@ -82,7 +83,7 @@ if [ ! -d "../virtualenv" ]; then
     fi
 fi
 
-source ../virtualenv/bin/activate
+source ${WORKSPACE_PATH}/virtualenv/bin/activate
 
 # Skip compiling and flash the existing binary.
 if [ "${USE_PREVIOUS_BUILD}" == false ]; then
