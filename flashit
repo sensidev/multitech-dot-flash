@@ -13,6 +13,7 @@ DEVICE_TARGET="${XDOT_TARGET}"
 
 USE_PREVIOUS_BUILD=false
 COMPILE_ONLY=false
+CLEAN_COMPILE=false
 
 function show_help() {
     echo "Compile and flash the firmware for Multitech xdot or mdot."
@@ -20,8 +21,9 @@ function show_help() {
     echo "flashit"
     echo "    -h --help"
     echo "    -t --target=[xdot|mdot]   Choose your target xdot or mdot."
-    echo "    -p --previous             Use previous build for current target."
+    echo "    -p --previous             Use previous build to flash current target."
     echo "    -c --compile              Build only without flashing."
+    echo "    -C --clean                Perform a clean compile, removing ./BUILD folder first."
     echo ""
     echo "Examples:"
     echo "Compile and flash an xdot"
@@ -51,6 +53,9 @@ function parse_options() {
                 ;;
             -c | --compile)
                 COMPILE_ONLY=true
+                ;;
+            -C | --clean)
+                CLEAN_COMPILE=true
                 ;;
             *)
                 echo "[ERROR] Unknown parameter \"${PARAM}\""
@@ -93,12 +98,12 @@ function install_mbed_toolchain_within_virtualenv() {
 }
 
 function compile() {
-    if [ "${USE_PREVIOUS_BUILD}" == false ]; then
+    if [ "${USE_PREVIOUS_BUILD}" = false ]; then
         echo "[INFO] Device name: ${DEVICE_NAME}"
         echo "[INFO] Building for target: ${DEVICE_TARGET}";
 
         # Remove the previous builds if any.
-        if [ -d "./BUILD" ]; then
+        if [ -d "./BUILD" ] && [ "${CLEAN_COMPILE}" = true ]; then
             rm -r ./BUILD/*
             echo "[INFO] Removed the previous builds."
         fi
