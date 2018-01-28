@@ -134,7 +134,7 @@ function flash() {
     fi
 }
 
-parse_options
+parse_options $*
 install_mbed_toolchain_within_virtualenv
 activate_mbed_virtualenv
 deploy_mbed_project
