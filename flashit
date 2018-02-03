@@ -15,6 +15,14 @@ USE_PREVIOUS_BUILD=false
 COMPILE_ONLY=false
 CLEAN_COMPILE=false
 
+# Errors
+NO_ERROR=0
+ERROR_COMPILING_ERRORS=1
+ERROR_NO_BINARY_FILE=2
+ERROR_MBED_REQUIREMENTS_MISSING=3
+ERROR_UNKNOWN_OPTION=4
+ERROR_DEVICE_NOT_CONNECTED=5
+
 function show_help() {
     echo "Compile and flash the firmware for Multitech xdot or mdot."
     echo ""
@@ -60,7 +68,7 @@ function parse_options() {
             *)
                 echo "[ERROR] Unknown parameter \"${PARAM}\""
                 show_help
-                exit 1
+                exit ${ERROR_UNKNOWN_OPTION}
                 ;;
         esac
         shift
@@ -92,7 +100,7 @@ function install_mbed_toolchain_within_virtualenv() {
             pip install -r mbed-os/requirements.txt
         else
             echo "[ERROR] No requirements.txt available. Maybe mbed-os is not deployed."
-            exit 3
+            exit ${ERROR_MBED_REQUIREMENTS_MISSING}
         fi
     fi
 }
@@ -110,6 +118,10 @@ function compile() {
 
         # Compile it for the specific target with ARM GCC.
         mbed compile -m ${DEVICE_TARGET} -t GCC_ARM
+
+        if [ ! $? -eq 0 ]; then
+            exit ${ERROR_COMPILING_ERRORS}
+        fi
     else
         echo "[INFO] Using the previous build for ${DEVICE_NAME}"
     fi
@@ -118,7 +130,7 @@ function compile() {
 function ensure_compiled_binary() {
     if [ ! -f ./BUILD/${DEVICE_TARGET}/GCC_ARM/${REPO_NAME}.bin ]; then
         echo "[ERROR] No binary file to flash. Are there any compiling errors?"
-        exit 1
+        exit ${ERROR_NO_BINARY_FILE}
     fi
 }
 
@@ -126,7 +138,7 @@ function ensure_compiled_binary() {
 function ensure_device_volume_mounted() {
     if [ ! -d /Volumes/${DEVICE_NAME} ]; then
         echo "[ERROR] The ${DEVICE_NAME} device is not connected."
-        exit 2
+        exit ${ERROR_DEVICE_NOT_CONNECTED}
     fi
 }
 
@@ -148,4 +160,4 @@ ensure_compiled_binary
 ensure_device_volume_mounted
 flash
 
-exit 0
+exit ${NO_ERROR}
