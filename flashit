@@ -105,15 +105,24 @@ function install_mbed_toolchain_within_virtualenv() {
     fi
 }
 
+function remove_python_compiled_files() {
+    echo "[INFO] Removing python compiled files."
+    find ${WORKSPACE_PATH} -name "*.pyc" -delete
+}
+
 function compile() {
     if [ "${USE_PREVIOUS_BUILD}" = false ]; then
         echo "[INFO] Device name: ${DEVICE_NAME}"
         echo "[INFO] Building for target: ${DEVICE_TARGET}";
 
-        # Remove the previous builds if any.
-        if [ -d "./BUILD" ] && [ "${CLEAN_COMPILE}" = true ]; then
-            rm -r ./BUILD/*
-            echo "[INFO] Removed the previous builds."
+        if [ "${CLEAN_COMPILE}" = true ]; then
+            remove_python_compiled_files
+
+            # Remove the previous builds if any.
+            if [ -d "./BUILD" ] && [ "${CLEAN_COMPILE}" = true ]; then
+                rm -r ./BUILD/*
+                echo "[INFO] Removed the previous builds."
+            fi
         fi
 
         # Compile it for the specific target with ARM GCC.
