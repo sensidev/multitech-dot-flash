@@ -30,7 +30,7 @@ function show_help() {
     echo "    -h --help"
     echo "    -t --target=[xdot|mdot]   Choose your target xdot or mdot."
     echo "    -p --previous             Use previous build to flash current target."
-    echo "    -c --compile              Build only without flashing."
+    echo "    -c --compile              Build only, without uploading to target."
     echo "    -C --clean                Perform a clean compile, removing ./BUILD folder first."
     echo ""
     echo "Examples:"
@@ -145,7 +145,7 @@ function ensure_compiled_binary() {
 
 
 function ensure_device_volume_mounted() {
-    if [ ! -d /Volumes/${DEVICE_NAME} ]; then
+    if [ ! -d /Volumes/${DEVICE_NAME} ] && [ "${COMPILE_ONLY}" = false ]; then
         echo "[ERROR] The ${DEVICE_NAME} device is not connected."
         exit ${ERROR_DEVICE_NOT_CONNECTED}
     fi
